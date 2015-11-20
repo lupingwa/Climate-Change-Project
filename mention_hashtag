@@ -1,0 +1,88 @@
+#!/usr/bin/python
+
+import re
+import os
+from collections import Counter
+
+def Write(Obj,File):
+	count=Counter(Obj)
+	for item in count:
+		File.writelines(item+','+str(count[item])+'\n')
+	#Set = set(Obj)
+	#for item in Set:
+	#	Count = Obj.count(item)
+	#	File.writeline(item+','+str(Count))
+
+FileSet = os.listdir('./data')
+
+path = 'result'
+if os.path.exists(path)==0:
+	os.mkdir(path)
+
+for item in FileSet:
+	IfCSV = re.match(r'.*\.csv',item)
+	if IfCSV:
+		print item
+		ThisFile = open(r'./data/'+item,'r')
+		text = ThisFile.read()
+		#print text
+		ThisFile.close()
+
+		AtFile = open(r'./result/'+item[:-4]+'_At.txt','w')
+		SharpFile = open(r'./result/'+item[:-4]+'_Sharp.txt','w')
+		#print len(text)
+
+		AtObj = re.findall(r'(@[\w]+)',text,re.M)
+		SharpObj = re.findall(r'(#[\w]+)',text,re.M)
+		#print AtObj
+		Write(AtObj,AtFile)
+		Write(SharpObj,SharpFile)
+
+		AtFile.close()
+		SharpFile.close()
+
+
+#wlp_file=open('wlp_data.csv')
+#text=wlp_file.read()
+#wlp_file.close()
+#
+#line=text.split('\n')
+##print len(line)
+#
+#edit_line=line
+#edit_line[0]=edit_line[0]+'METIONED_USERNAMES,'
+#result_set=[]
+#
+#for i in range(1,len(line)):
+#	matchObj=re.findall(r'@([\w_]+)',line[i])
+#	print matchObj
+#	matchstr=''
+#	for j in range(0,len(matchObj)):
+#		matchstr=matchstr+str(matchObj[j])+';'
+#	if len(matchObj)==0:
+#		matchstr=';'
+#	print matchstr
+#	edit_line[i] = edit_line[i] + ','+matchstr+'\n'
+#	print edit_line[i]
+#	print('*******')
+#	result_set=result_set+matchObj
+#
+#print len(result_set)
+#
+#set_set=set(result_set)
+#print len(set_set)
+#set_count=[]
+#i=0
+#for item in set_set:
+#	print item,result_set.count(item)
+#	set_count.append(str(item)+','+str(result_set.count(item))+'\n')
+#
+##print set_count
+##print edit_line
+#file_object = open('extend_data.txt', 'w')
+#file_object.writelines(edit_line)
+#file_object.close( )
+#
+#file_object = open('count.txt', 'w')
+#file_object.writelines(set_count)
+#file_object.close( )
