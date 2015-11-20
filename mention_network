@@ -1,0 +1,68 @@
+#!/usr/bin/python
+
+import os
+
+# Def DataProcess Main Function
+def DataProcess(FileName,DATA_PATH,RESULT_PATH):
+	ResultName = RESULT_PATH+FileName[:-4]
+	DATAFILE = open(DATA_PATH+FileName)
+	DATA = DATAFILE.readlines()
+	DATAFILE.close()
+	Pair = []
+	Name = []
+	for line in DATA:
+		if '@' in line:
+			continue
+		if line == '':
+			continue
+		line_Content = line.split(',')
+		for i in range(0,len(line_Content)):
+			line_Content[i] = ''.join(line_Content[i].split())
+			if line_Content[i]!='':
+				Name.append(line_Content[i])
+				if i>0:
+					Pair.append([line_Content[0],line_Content[i]])
+
+	FILE = open(ResultName + '_NamePair.csv','w')
+	FILE.write('From,@\n')
+	for pair in Pair:
+		FILE.write(pair[0]+','+pair[1]+'\n')
+	FILE.close()
+
+	Name = list(set(Name))
+	Name.sort()
+	NameDict = dict()
+	NameLength = len(Name)
+	DigitLength = len("%d"%NameLength)
+	for i in range(0,NameLength):
+		value = str(i+1).zfill(DigitLength)
+		NameDict[Name[i]] = value
+
+	FILE = open(ResultName + '_NameNum.csv','w')
+	FILE.write('Name,Number\n')
+	for name in Name:
+		FILE.write(name+','+NameDict[name]+'\n')
+	FILE.close()
+
+	FILE = open(ResultName + '_NumPair.csv','w')
+	FILE.write('From,@\n')
+	for pair in Pair:
+		FILE.write(NameDict[pair[0]]+','+NameDict[pair[1]]+'\n')
+	FILE.close()
+
+# Get all .csv files in folder ./data/
+DATA_PATH = './data/'
+RESULT_PATH = './result/'
+FILE_KIND = '.csv'
+FileList = os.listdir(DATA_PATH)
+CSVList = []
+for item in FileList:
+	if FILE_KIND in item:
+		CSVList.append(item)
+if not os.path.exists(RESULT_PATH):
+	os.mkdir(RESULT_PATH)
+
+# Data Process
+for item in CSVList:
+	DataProcess(item,DATA_PATH,RESULT_PATH)
+
